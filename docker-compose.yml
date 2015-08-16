@@ -1,0 +1,19 @@
+postgres:
+  image: postgres
+  ports:
+    - "5432:5432"
+turningpoint-parser:
+  build: .
+  env_file: .env
+  command: bash -c "while true; do sleep 3; grunt serve; done"
+  working_dir: /app
+  volumes:
+    - ./dist:/app/dist
+    - ./data:/app/data
+    - ./app:/app/app
+    - ./typings:/app/typings
+    - Gruntfile.js:/app/Gruntfile.js
+  links:
+    - postgres:postgres
+  ports:
+    - "9000:9000"

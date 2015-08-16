@@ -1,0 +1,51 @@
+{
+  "version": "v4",
+  "repo": "borisyankov/DefinitelyTyped",
+  "ref": "master",
+  "path": "typings",
+  "bundle": "typings/tsd.d.ts",
+  "installed": {
+    "node/node.d.ts": {
+      "commit": "5109e1269d6ab8e8e73b1a5e85d8ceb836d3099f"
+    },
+    "adm-zip/adm-zip.d.ts": {
+      "commit": "5109e1269d6ab8e8e73b1a5e85d8ceb836d3099f"
+    },
+    "xml2js/xml2js.d.ts": {
+      "commit": "5109e1269d6ab8e8e73b1a5e85d8ceb836d3099f"
+    },
+    "source-map-support/source-map-support.d.ts": {
+      "commit": "5109e1269d6ab8e8e73b1a5e85d8ceb836d3099f"
+    },
+    "sequelize/sequelize.d.ts": {
+      "commit": "5109e1269d6ab8e8e73b1a5e85d8ceb836d3099f"
+    },
+    "lodash/lodash.d.ts": {
+      "commit": "5109e1269d6ab8e8e73b1a5e85d8ceb836d3099f"
+    },
+    "pg/pg.d.ts": {
+      "commit": "5109e1269d6ab8e8e73b1a5e85d8ceb836d3099f"
+    },
+    "validator/validator.d.ts": {
+      "commit": "5109e1269d6ab8e8e73b1a5e85d8ceb836d3099f"
+    },
+    "bluebird/bluebird.d.ts": {
+      "commit": "5109e1269d6ab8e8e73b1a5e85d8ceb836d3099f"
+    },
+    "cors/cors.d.ts": {
+      "commit": "5109e1269d6ab8e8e73b1a5e85d8ceb836d3099f"
+    },
+    "serve-static/serve-static.d.ts": {
+      "commit": "5109e1269d6ab8e8e73b1a5e85d8ceb836d3099f"
+    },
+    "mime/mime.d.ts": {
+      "commit": "5109e1269d6ab8e8e73b1a5e85d8ceb836d3099f"
+    },
+    "express/express.d.ts": {
+      "commit": "5109e1269d6ab8e8e73b1a5e85d8ceb836d3099f"
+    },
+    "body-parser/body-parser.d.ts": {
+      "commit": "5109e1269d6ab8e8e73b1a5e85d8ceb836d3099f"
+    }
+  }
+}
