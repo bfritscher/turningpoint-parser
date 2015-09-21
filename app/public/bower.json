@@ -13,6 +13,7 @@
     "tests"
   ],
   "dependencies": {
-    "dropzone": "~4.0.1"
+    "dropzone": "~4.0.1",
+    "nvd3": "~1.8.1"
   }
 }
