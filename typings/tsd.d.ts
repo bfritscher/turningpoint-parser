@@ -12,6 +12,7 @@
 /// <reference path="mime/mime.d.ts" />
 /// <reference path="serve-static/serve-static.d.ts" />
 /// <reference path="body-parser/body-parser.d.ts" />
+/// <reference path="d3/d3.d.ts" />
 
 declare module "connect-multiparty" {
     import express = require("express");

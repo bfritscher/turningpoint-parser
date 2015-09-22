@@ -34,6 +34,18 @@ app.get('/sessions', (req, res) => {
     });
 });
 
+app.get('/participantLists', (req, res) => {
+    turningpointParser.getParticipantLists().then((result) => {
+       res.json(result);
+    });
+});
+
+app.get('/participantLists/:name', (req, res) => {
+    turningpointParser.getParticipantListDetail(req.params.name).then((result) => {
+        res.json(result);
+    });
+});
+
 app.get('/cube', (req, res) => {
     turningpointParser.getCube().then((sessions) => {
        res.json(sessions);

@@ -46,6 +46,9 @@
     },
     "body-parser/body-parser.d.ts": {
       "commit": "5109e1269d6ab8e8e73b1a5e85d8ceb836d3099f"
+    },
+    "d3/d3.d.ts": {
+      "commit": "09e37435ffb2c56a6f908081194a74756f24f99d"
     }
   }
 }

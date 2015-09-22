@@ -175,7 +175,8 @@ GROUP BY s.guid, s.pptx, s."participantlistName", s.date, q.guid, q.questiontext
 
 */
 
-var cubeQuery =  'SELECT s.guid session_guid, s.pptx session_pptx, s."participantlistName" session_participantlistname, s.date session_date, '
+export function getCube(){
+    var cubeQuery =  'SELECT s.guid session_guid, s.pptx session_pptx, s."participantlistName" session_participantlistname, s.date session_date, '
     + 'q.guid question_guid,  q.questiontext question_text, EXTRACT(EPOCH FROM q.endtime - q.starttime) question_time, q.responselimit question_responselimit, '
     + 'r.deviceid answer_deviceid, '
     + "SUM(CASE WHEN a.valuetype = 1 AND r.responsestring LIKE '%' || a.index || '%' "
@@ -187,7 +188,25 @@ var cubeQuery =  'SELECT s.guid session_guid, s.pptx session_pptx, s."participan
     + 'FROM "Sessions" s JOIN "Questions" q ON s.guid = q.session_guid JOIN "Answers" a ON q.guid = a.question_guid '
     + 'LEFT JOIN "Responses" r ON q.guid = r.question_guid '
     + 'GROUP BY s.guid, s.pptx, s."participantlistName", s.date, q.guid, q.questiontext, q.starttime, q.endtime, q.responselimit, r.deviceid, r.responsestring, r.elapsed';
+    return sequelize.query(cubeQuery, { type: sequelize.QueryTypes.SELECT});
+}
 
-export function getCube(){
-    return sequelize.query(cubeQuery,  { type: sequelize.QueryTypes.SELECT});
+export function getParticipantListDetail( participantListName ) {
+    var query =  'SELECT session_guid, session_pptx, session_date, answer_deviceid, SUM(answer_points) answer_points, AVG(answer_time_taken) answer_avg_time_taken '
+    + 'FROM (SELECT s.guid session_guid, s.pptx session_pptx, s.date session_date, '
+    + 'q.guid question_guid, r.deviceid answer_deviceid, '
+    + "SUM(CASE WHEN a.valuetype = 1 AND r.responsestring LIKE '%' || a.index || '%' "
+    + 'THEN q.correctvalue ELSE q.incorrectvalue END) answer_points, '
+    + 'r.elapsed / 1000 answer_time_taken '
+    + 'FROM "Sessions" s JOIN "Questions" q ON s.guid = q.session_guid JOIN "Answers" a ON q.guid = a.question_guid '
+    + 'LEFT JOIN "Responses" r ON q.guid = r.question_guid '
+    + 'WHERE s."participantlistName" = ? '
+    + 'GROUP BY s.guid, s.pptx, s.date, q.guid,r.deviceid, r.responsestring, r.elapsed) g '
+    + 'GROUP BY session_guid, session_pptx, session_date, answer_deviceid ORDER BY session_date';
+    return sequelize.query( query, { replacements: [participantListName], type: sequelize.QueryTypes.SELECT} );
+}
+
+export function getParticipantLists() {
+    var query = 'SELECT "participantlistName" FROM "Sessions" GROUP BY "participantlistName"';
+    return sequelize.query(query, { type: sequelize.QueryTypes.SELECT});
 }
