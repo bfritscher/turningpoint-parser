@@ -9,6 +9,8 @@ import bodyParser = require('body-parser');
 import multiparty = require('connect-multiparty');
 //import jwt = require('jsonwebtoken');
 //import expressJwt = require('express-jwt');
+
+
 import turningpointParser = require('./turningpointparser');
 
 var multipartMiddleware = multiparty();

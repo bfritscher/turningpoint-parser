@@ -147,7 +147,7 @@ export function parseZip(path: string, callback){
             pptxName = zipEntry.entryName;
         }
     });
-    if(callback){
+    if (callback){
         callback();
     }
 }
@@ -176,14 +176,14 @@ GROUP BY s.guid, s.pptx, s."participantlistName", s.date, q.guid, q.questiontext
 */
 
 var cubeQuery =  'SELECT s.guid session_guid, s.pptx session_pptx, s."participantlistName" session_participantlistname, s.date session_date, '
-	+ 'q.guid question_guid,  q.questiontext question_text, EXTRACT(EPOCH FROM q.endtime - q.starttime) question_time, q.responselimit question_responselimit, '
-	+ 'r.deviceid answer_deviceid, '
-	+ "SUM(CASE WHEN a.valuetype = 1 AND r.responsestring LIKE '%' || a.index || '%' "
+    + 'q.guid question_guid,  q.questiontext question_text, EXTRACT(EPOCH FROM q.endtime - q.starttime) question_time, q.responselimit question_responselimit, '
+    + 'r.deviceid answer_deviceid, '
+    + "SUM(CASE WHEN a.valuetype = 1 AND r.responsestring LIKE '%' || a.index || '%' "
     + 'THEN q.correctvalue ELSE q.incorrectvalue END) answer_points, '
     + 'r.responsestring answer_given, r.elapsed / 1000 answer_time_taken, '
-	+ "string_agg(CASE WHEN a.valuetype = 1 THEN CAST(a.index AS text) ELSE '' END, '' order by index) answer, "
-	+ "string_agg(CASE WHEN a.valuetype = 1 THEN a.answertext || '\n' ELSE '' END, '' order by index) answer_text, "
-	+ "string_agg(CASE WHEN r.responsestring LIKE '%' || a.index || '%' THEN a.answertext || '\n' ELSE '' END, '' order by index) answer_text_given "
+    + "string_agg(CASE WHEN a.valuetype = 1 THEN CAST(a.index AS text) ELSE '' END, '' order by index) answer, "
+    + "string_agg(CASE WHEN a.valuetype = 1 THEN a.answertext || '\n' ELSE '' END, '' order by index) answer_text, "
+    + "string_agg(CASE WHEN r.responsestring LIKE '%' || a.index || '%' THEN a.answertext || '\n' ELSE '' END, '' order by index) answer_text_given "
     + 'FROM "Sessions" s JOIN "Questions" q ON s.guid = q.session_guid JOIN "Answers" a ON q.guid = a.question_guid '
     + 'LEFT JOIN "Responses" r ON q.guid = r.question_guid '
     + 'GROUP BY s.guid, s.pptx, s."participantlistName", s.date, q.guid, q.questiontext, q.starttime, q.endtime, q.responselimit, r.deviceid, r.responsestring, r.elapsed';
