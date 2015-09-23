@@ -12,22 +12,24 @@
 </head>
 
 <body>
-  <h1>Turningpoint Parser</h1>
-  <form action="/upload"
+  <div class="detail-hidden">
+    <h1>Turningpoint Parser</h1>
+    <form action="/upload"
       class="dropzone"
       id="dropzone"></form>
-
-  <h2>Report</h2>
-  <div id="chart">
-    <svg style="height:500px"></svg>
   </div>
-  <table>
-    <thead>
-      <tr id="score_headers"></tr>
-    </thead>
-    <tbody id="score_data">
-    </tbody>
-  </table>
+  <div class="main-hidden">
+    <div id="chart">
+      <svg style="height:500px"></svg>
+    </div>
+    <table>
+      <thead>
+        <tr id="score_headers"></tr>
+      </thead>
+      <tbody id="score_data">
+      </tbody>
+    </table>
+  </div>
 
   <script src="bower_components/dropzone/dist/min/dropzone.min.js"></script>
   <script src="bower_components/d3/d3.min.js"></script>

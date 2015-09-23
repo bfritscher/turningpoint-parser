@@ -2,10 +2,37 @@
 
 declare var nv: any;
 
-d3.json('participantLists/621-2.1%20SQL,%201IGPT,%20SA,%20Boris%20Fritscher', function(error, json) {
-  if (error) {
-    return console.warn(error);
-  }
+if (window.location.hash) {
+  d3.json('participantLists/' + window.location.hash.substr(1), function(error, json) {
+    if (error) {
+      return console.warn(error);
+    }
+    displayParticipantListsDetail(json);
+  });
+  d3.select('body').attr('class', 'detail');
+} else {
+  d3.json('participantLists', function(error, json) {
+    if (error) {
+      return console.warn(error);
+    }
+    displayParticipantLists(json);
+  });
+  d3.select('body').attr('class', 'main');
+}
+
+function displayParticipantLists(json) {
+  d3.select('body')
+  .selectAll('p')
+  .data(json)
+  .enter()
+  .append('p')
+  .text((d: any) => {
+    return d.participantlistName;
+  });
+}
+
+
+function displayParticipantListsDetail(json) {
   //clean data
   var lookup = {};
   var sessions = {};
@@ -43,7 +70,7 @@ d3.json('participantLists/621-2.1%20SQL,%201IGPT,%20SA,%20Boris%20Fritscher', fu
 
   createGraph(data, headers.map((item) => { return item.date; }));
   createTable(data, headers);
-});
+}
 
 function createGraph(data, headers) {
 
@@ -76,15 +103,19 @@ function createGraph(data, headers) {
 }
 
 function createTable(data, headers){
-  headers.unshift({date: 'ID'});
-  headers.push({date: 'Total'});
+  headers.unshift({text: 'ID'});
+  headers.push({text: 'Total'});
   d3.select('#score_headers')
   .selectAll('th')
   .data(headers)
   .enter()
   .append('th')
-  .text((d: any) => {
-    return d.date;
+  .text((d: any, i ) => {
+    if ( i > 0 && i < headers.length - 1) {
+      return  d3.time.format('%d.%m')( new Date(d.date) );
+    } else {
+      return d.text;
+    }
   });
 
   d3.select('#score_data')
