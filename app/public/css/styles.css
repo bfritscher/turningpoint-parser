@@ -10,3 +10,36 @@ body{
 .main .main-hidden {
 	display: none;
 }
+
+table.table {
+	border-collapse: collapse;
+}
+
+.table tbody tr {
+	border: 1px solid #333;
+}
+
+.table tbody td:not(:first-child) {
+	text-align: right;
+}
+
+.table tbody td:last-child {
+	font-weight: bold;
+}
+
+
+.table tbody tr:nth-child(even){
+	background-color: #E4EFFF;
+}
+
+.table tbody tr:hover{
+	background-color: #FFFFCE;
+}
+
+.table tbody tr td:nth-child(even){
+	background-color: #DEE7F5;
+}
+
+.table tbody tr:nth-child(even) td:nth-child(even) {
+	background-color: #DEE7F5;
+}
