@@ -53,11 +53,19 @@ app.get('/cube', (req, res) => {
 });
 
 app.post('/upload', multipartMiddleware, (req: multiparty.Request, res) => {
-    turningpointParser.parseZip(req.files.file.path, () => {
-        // don't forget to delete all req.files when don
-        fs.unlinkSync(req.files.file.path);
-        res.sendStatus(200);
-    });
+    if (req.files.file.path.indexOf('.tplx') > 0) {
+        turningpointParser.parseTplx(req.files.file.path, () => {
+            // don't forget to delete all req.files when done
+            fs.unlinkSync(req.files.file.path);
+            res.sendStatus(200);
+        });
+    } else {
+        turningpointParser.parseZip(req.files.file.path, () => {
+            // don't forget to delete all req.files when done
+            fs.unlinkSync(req.files.file.path);
+            res.sendStatus(200);
+        });
+    }
 });
 
 server.listen(process.env.SERVER_PORT, '0.0.0.0');

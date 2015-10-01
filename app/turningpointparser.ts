@@ -4,6 +4,7 @@ require('source-map-support').install();
 import AdmZip = require('adm-zip');
 import xml2js = require('xml2js');
 import Sequelize = require('sequelize');
+import fs = require('fs');
 
 var sequelize = new Sequelize('postgres://postgres@' + process.env.POSTGRES_PORT_5432_TCP_ADDR + ':' + process.env.POSTGRES_PORT_5432_TCP_PORT + '/postgres');
 
@@ -16,6 +17,7 @@ var Session = sequelize.define('Session', {
 }, {
     timestamps: false
 });
+
 
 var Question = sequelize.define('Question', {
     guid: { type: Sequelize.STRING, primaryKey: true},
@@ -64,10 +66,21 @@ var Response = sequelize.define('Response', {
     timestamps: false
 });
 
+var Participant = sequelize.define('Participant', {
+    deviceid: { type: Sequelize.STRING, primaryKey: true},
+    participantlistName: {type: Sequelize.STRING, primaryKey: true},
+    firstname: Sequelize.STRING,
+    lastname: Sequelize.STRING,
+    matricule: Sequelize.STRING,
+    genre: Sequelize.STRING,
+    status: Sequelize.STRING
+}, {
+    timestamps: false
+});
+
 Session.hasMany(Question, {as: 'Questions', foreignKey: 'session_guid'});
 Question.hasMany(Answer, {as: 'Answers', foreignKey: 'question_guid'});
 Question.hasMany(Response, {as: 'Responses', foreignKey: 'question_guid'});
-
 
 sequelize.sync();
 
@@ -84,9 +97,27 @@ LEFT JOIN "Responses" r ON q.guid = r.question_guid
 GROUP BY s.guid, s.pptx, s."participantlistName", s.date, r.deviceid
 
 */
+// Participant list parsing
+export function parseTplx(path: string, callback) {
+    var parser = new xml2js.Parser({explicitArray: false});
+    parser.parseString(fs.readFileSync(path).toString(), (err, xml) => {
+        xml.participantlist.participants.participant.forEach( participant => {
+            var p = {
+                deviceid: participant.devices.device,
+                participantlistName: xml.participantlist.name,
+                lastname: participant.lastname,
+                firstname: participant.firstname
+            };
+            participant.custom.forEach( custom => {
+                p[custom.id] = custom.text;
+            });
+            Participant.upsert(p);
+        });
+    });
+}
 
 // ZIP parsing
-export function parseZip(path: string, callback){
+export function parseZip(path: string, callback) {
     var zip = new AdmZip(path);
     var zipEntries = zip.getEntries(); // an array of ZipEntry records
     var parser = new xml2js.Parser({explicitArray: false});
@@ -184,25 +215,28 @@ export function getCube(){
     + 'r.responsestring answer_given, r.elapsed / 1000 answer_time_taken, '
     + "string_agg(CASE WHEN a.valuetype = 1 THEN CAST(a.index AS text) ELSE '' END, '' order by index) answer, "
     + "string_agg(CASE WHEN a.valuetype = 1 THEN a.answertext || '\n' ELSE '' END, '' order by index) answer_text, "
-    + "string_agg(CASE WHEN r.responsestring LIKE '%' || a.index || '%' THEN a.answertext || '\n' ELSE '' END, '' order by index) answer_text_given "
+    + "string_agg(CASE WHEN r.responsestring LIKE '%' || a.index || '%' THEN a.answertext || '\n' ELSE '' END, '' order by index) answer_text_given, "
+    + 'p.lastname, p.firstname, p.matricule, p.genre '
     + 'FROM "Sessions" s JOIN "Questions" q ON s.guid = q.session_guid JOIN "Answers" a ON q.guid = a.question_guid '
     + 'LEFT JOIN "Responses" r ON q.guid = r.question_guid '
-    + 'GROUP BY s.guid, s.pptx, s."participantlistName", s.date, q.guid, q.questiontext, q.starttime, q.endtime, q.responselimit, r.deviceid, r.responsestring, r.elapsed';
+    + 'LEFT JOIN "Participants" p ON p.deviceid = r.deviceid AND p."participantlistName" = s."participantlistName" '
+    + 'GROUP BY s.guid, s.pptx, s."participantlistName", s.date, q.guid, q.questiontext, q.starttime, q.endtime, q.responselimit, r.deviceid, r.responsestring, r.elapsed, p.lastname, p.firstname, p.matricule, p.genre';
     return sequelize.query(cubeQuery, { type: sequelize.QueryTypes.SELECT});
 }
 
 export function getParticipantListDetail( participantListName ) {
-    var query =  'SELECT session_guid, session_pptx, session_date, answer_deviceid, SUM(answer_points) answer_points, AVG(answer_time_taken) answer_avg_time_taken '
+    var query =  'SELECT session_guid, session_pptx, session_date, answer_deviceid, lastname, firstname, matricule, genre, SUM(answer_points) answer_points, AVG(answer_time_taken) answer_avg_time_taken '
     + 'FROM (SELECT s.guid session_guid, s.pptx session_pptx, s.date session_date, '
     + 'q.guid question_guid, r.deviceid answer_deviceid, '
     + "SUM(CASE WHEN a.valuetype = 1 AND r.responsestring LIKE '%' || a.index || '%' "
     + 'THEN q.correctvalue ELSE q.incorrectvalue END) answer_points, '
-    + 'r.elapsed / 1000 answer_time_taken '
+    + 'r.elapsed / 1000 answer_time_taken, p.lastname, p.firstname, p.matricule, p.genre '
     + 'FROM "Sessions" s JOIN "Questions" q ON s.guid = q.session_guid JOIN "Answers" a ON q.guid = a.question_guid '
     + 'LEFT JOIN "Responses" r ON q.guid = r.question_guid '
-    + 'WHERE s."participantlistName" = ? '
-    + 'GROUP BY s.guid, s.pptx, s.date, q.guid,r.deviceid, r.responsestring, r.elapsed) g '
-    + 'GROUP BY session_guid, session_pptx, session_date, answer_deviceid ORDER BY session_date';
+    + 'LEFT JOIN "Participants" p ON p.deviceid = r.deviceid AND p."participantlistName" = s."participantlistName" '
+    + 'WHERE s."participantlistName" = ? AND r.deviceid IS NOT NULL '
+    + 'GROUP BY s.guid, s.pptx, s.date, q.guid,r.deviceid, r.responsestring, r.elapsed, p.lastname, p.firstname, p.matricule, p.genre) g '
+    + 'GROUP BY session_guid, session_pptx, session_date, answer_deviceid, lastname, firstname, matricule, genre ORDER BY session_date';
     return sequelize.query( query, { replacements: [participantListName], type: sequelize.QueryTypes.SELECT} );
 }
 
