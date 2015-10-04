@@ -5,9 +5,9 @@ COPY Gruntfile.js /app/Gruntfile.js
 COPY tslint.json /app/tslint.json
 WORKDIR /app
 RUN npm install
-#RUN grunt
-
-#VOLUME ["/amc/projects"]
+COPY /app /app/app
+COPY /typings /app/typings
+RUN grunt
 
 # Define default command.
-#CMD ["supervisor", "--watch", "/amc/dist", "dist/server.js"]
+CMD ["supervisor", "--watch", "/app/dist", "dist/server.js"]

@@ -1,4 +1,5 @@
 .env
 Dockerfile
 docker-compose.yml
+production.yml
 node_modules/*

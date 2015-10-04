@@ -1,0 +1,6 @@
+turningpoint-parser:
+  build: .
+  env_file: .env
+  working_dir: /app
+  ports:
+    - "9000:9000"
