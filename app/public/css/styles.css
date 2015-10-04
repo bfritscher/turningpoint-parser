@@ -1,5 +1,6 @@
 body{
 	font-family: Verdana, Geneva, Tahoma, sans-serif;
+	font-size: 10pt;
 	margin: 0;
 }
 
@@ -27,14 +28,14 @@ table.table {
 	font-weight: bold;
 }
 
+.table tbody tr:hover, .table tbody tr:hover td{
+	background-color: #FFFFCE !important;
+}
 
 .table tbody tr:nth-child(even){
 	background-color: #E4EFFF;
 }
 
-.table tbody tr:hover{
-	background-color: #FFFFCE;
-}
 
 .table tbody tr td:nth-child(even){
 	background-color: #DEE7F5;
@@ -42,4 +43,9 @@ table.table {
 
 .table tbody tr:nth-child(even) td:nth-child(even) {
 	background-color: #DEE7F5;
+}
+
+#table-container {
+	width: 100%;
+	overflow: auto;
 }

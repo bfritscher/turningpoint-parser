@@ -115,8 +115,8 @@ function createGraph(data, headers) {
 }
 
 function createTable(data, headers){
-  headers.unshift({text: 'Nom', guid:'id'});
-  headers.push({text: 'Total', guid:'total'});
+  headers.unshift({text: 'Nom', guid: 'id'});
+  headers.push({text: 'Total', guid: 'total'});
   d3.select('#score_headers')
   .selectAll('th')
   .data(headers)
@@ -141,9 +141,9 @@ function createTable(data, headers){
 function sortData(data, guid){
   data.sort((a, b) => {
       // sorting columns
-      if(typeof guid === 'undefined' || guid === 'total'){
+      if (typeof guid === 'undefined' || guid === 'total') {
         return b.total - a.total;
-      } else if(guid === 'id') {
+      } else if (guid === 'id') {
         return b.key > a.key ? -1 : 1;
       } else {
         var itemA = findByGuid(guid, a.values);
@@ -155,9 +155,9 @@ function sortData(data, guid){
           } else {
             return diff;
           }
-        } else if(itemA) {
+        } else if (itemA) {
           return -1000;
-        } else if(itemB) {
+        } else if (itemB) {
           return 1000;
         } else {
           return b.key > a.key ? -1 : 1;
@@ -185,7 +185,7 @@ function drawTable(data, headers){
 
   td
   .enter()
-  .append('td')
+  .append('td');
 
   //update
   td.text((h: any, i) => {
