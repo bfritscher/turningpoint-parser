@@ -6,7 +6,7 @@ import xml2js = require('xml2js');
 import Sequelize = require('sequelize');
 import fs = require('fs');
 
-var sequelize = new Sequelize('postgres://' +  process.env.POSTGRES_USER + ':' +  process.env.POSTGRES_PASSWORD + '@' + process.env.POSTGRES_PORT_5432_TCP_ADDR + ':' + process.env.POSTGRES_PORT_5432_TCP_PORT + '/postgres');
+var sequelize = new Sequelize('postgres://' +  process.env.POSTGRES_USER + ':' +  process.env.POSTGRES_PASSWORD + '@' + process.env.POSTGRES_PORT_5432_TCP_ADDR + ':' + process.env.POSTGRES_PORT_5432_TCP_PORT + '/' + process.env.POSTGRES_DATABASE);
 
 // Model definition
 var Session = sequelize.define('Session', {
